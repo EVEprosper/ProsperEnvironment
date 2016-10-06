@@ -5,17 +5,34 @@
 
 from os import path
 import sys
-import configparser
-from configparser import ExtendedInterpolation
+from configparser import ConfigParser, ExtendedInterpolation
 
 import virtualenv
 
 CURRENT_DIR = path.abspath(path.dirname(__file__))
 CONFIG_PATH = path.join(CURRENT_DIR, 'bootstrap.cfg')
 
-def get_config(config_file = CONFIG_PATH):
+def get_config(config_file=CONFIG_PATH):
     '''parse config file for global vars'''
-    pass
+    local_config = ConfigParser(
+        interpolation=ExtendedInterpolation(),
+        allow_no_value=True,
+        delimiters=('='),
+        inline_comment_prefixes=('#')
+    )
+
+    try:
+        with open(config_file, 'r') as cfg_filehandle:
+            local_config.read_file(cfg_filehandle)
+
+        return local_config
+    except Exception as error_msg:
+        print(
+            'EXCEPTION: unable to parse config file' + \
+            '\r\texception={0}'.format(error_msg) + \
+            '\r\tconfig_file={0}'.format(config_file)
+        )
+        exit(-1)
 
 def main():
     '''runs create_boostrap_script functionality and spits out new virtualenv script'''
