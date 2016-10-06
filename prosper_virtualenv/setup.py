@@ -34,9 +34,10 @@ setup(
     packages=find_packages(),
     data_files={
         ('docs', include_all_subfiles('docs')),
+        ('scripts', include_all_subfiles('scripts'))
     },
     package_data={
-
+        'bootstrap':'bootstrap.cfg'
     },
     install_requires=[
 
