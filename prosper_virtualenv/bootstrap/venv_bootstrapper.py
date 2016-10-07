@@ -8,6 +8,7 @@ import sys
 from configparser import ConfigParser, ExtendedInterpolation
 
 import virtualenv
+from plumbumb import local
 
 CURRENT_DIR = path.abspath(path.dirname(__file__))
 CONFIG_PATH = path.join(CURRENT_DIR, 'bootstrap.cfg')
@@ -52,7 +53,36 @@ EXTRA_TEXT = '''
 
 def main():
     '''runs create_boostrap_script functionality and spits out new virtualenv script'''
-    pass
+    bootstrap_script = virtualenv.create_bootstrap_script(
+        EXTRA_TEXT,
+        python_version=CONFIG.get('environment', 'python_version')
+    )
+
+    result_script = CONFIG.get('bootstrap', 'result_script_name')
+    result_path = CONFIG.get('bootstrap', 'result_path')
+
+    result_abspath = None
+    if '..' in result_path:
+        local.cwd.chdir(CURRENT_DIR)
+        result_abspath = local.path(result_path)
+    else:
+        result_abspath = local.path(result_path)
+
+    current_text = ''
+    if local.path.is_file(result_abspath):
+        print('--PULLING EXISTING BOOTSTRAP SCRIPT--')
+        with open(result_abspath, 'r') as filehandle:
+            current_text = filehandle.read()
+    else:
+        print('--NO BOOTSTRAP FOUND--')
+
+    if current_text == bootstrap_script:
+        print('--NO UPDATE BOOTSTRAP SCRIPT--')
+    else:
+        print('--UPDATING BOOTSTRAP SCRIPT--')
+        with open(result_abspath, 'w') as filehandle:
+            filehandle.write(bootstrap_script)
+
 
 if __name__ == '__main__':
     main()
