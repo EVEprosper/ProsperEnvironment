@@ -8,7 +8,8 @@ import sys
 from configparser import ConfigParser, ExtendedInterpolation
 
 import virtualenv
-from plumbumb import local
+import plumbum as pb
+#from plumbum import local, path
 
 CURRENT_DIR = path.abspath(path.dirname(__file__))
 CONFIG_PATH = path.join(CURRENT_DIR, 'bootstrap.cfg')
@@ -63,13 +64,16 @@ def main():
 
     result_abspath = None
     if '..' in result_path:
-        local.cwd.chdir(CURRENT_DIR)
-        result_abspath = local.path(result_path)
+        pb.local.cwd.chdir(CURRENT_DIR)
+        result_abspath = pb.path.local.LocalPath(result_path)
     else:
-        result_abspath = local.path(result_path)
+        result_abspath = pb.local.path(result_path)
+    result_abspath.mkdir()
+    bootstrap_path = result_abspath / result_script #Plumbum maps __div__ to join()
+    result_abspath = pb.path.local.LocalPath(bootstrap_path)
 
     current_text = ''
-    if local.path.is_file(result_abspath):
+    if result_abspath.is_file():
         print('--PULLING EXISTING BOOTSTRAP SCRIPT--')
         with open(result_abspath, 'r') as filehandle:
             current_text = filehandle.read()
