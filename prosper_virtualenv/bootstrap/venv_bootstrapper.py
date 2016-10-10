@@ -44,7 +44,21 @@ CONFIG = get_config()
 ### !!ALL PASSED IN VALUES ARE STATIC!! ###
 
 EXTRA_TEXT = '''
+import pip
+import platform
+import site
 
+def extend_parser(parser):
+    """extra CLI args for adjusting parser"""
+    pass
+
+def adjust_options(option, args):
+    """TODO: IDK ¯\_(ツ)_/¯"""
+    pass
+
+def after_install(options, home_dir):
+    """actual venv bootstrap logic goes here"""
+    pass
 '''.format(
     None
 )
@@ -91,4 +105,4 @@ def main():
 if __name__ == '__main__':
     main()
 
-    
+
