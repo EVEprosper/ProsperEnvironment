@@ -1,0 +1,2 @@
+plumbum==1.6.2
+virtualenv==15.0.3
